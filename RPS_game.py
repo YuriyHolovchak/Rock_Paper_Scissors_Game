@@ -4,6 +4,9 @@ import random
 
 
 def play(player1, player2, num_games, verbose=False):
+    # The play function conducts a game between 2 players, checking whether there is
+    # a win or draw between the players and storing their last plays in a variable
+    # that is then passed into the players' data.
     p1_prev_play = ""
     p2_prev_play = ""
     results = {"p1": 0, "p2": 0, "tie": 0}
@@ -46,13 +49,16 @@ def play(player1, player2, num_games, verbose=False):
 
 
 def quincy(prev_play, counter=[0]):
-
+    # Quincy depends on a counter that always plays RRPPS in that order and starts over when list exhausts
     counter[0] += 1
     choices = ["R", "R", "P", "P", "S"]
     return choices[counter[0] % len(choices)]
 
 
 def mrugesh(prev_opponent_play, opponent_history=[]):
+    # Mrugesh looks at the past 10 opponent plays, checks what move was used most frequently,
+    # and uses a dictionary to counter that most frequent move with the best counter move.
+    # If the history was empty, Mrugesh counteracts a scissors move with rock.
     opponent_history.append(prev_opponent_play)
     last_ten = opponent_history[-10:]
     most_frequent = max(set(last_ten), key=last_ten.count)
@@ -65,6 +71,8 @@ def mrugesh(prev_opponent_play, opponent_history=[]):
 
 
 def kris(prev_opponent_play):
+    # Kris simply looks at the opponent's previous move to counter it with a perfect move.
+    # If there is no history, Kris counteracts a rock with a paper.
     if prev_opponent_play == '':
         prev_opponent_play = "R"
     ideal_response = {'P': 'S', 'R': 'P', 'S': 'R'}
@@ -84,7 +92,12 @@ def abbey(prev_opponent_play,
               "SP": 0,
               "SS": 0,
           }]):
-
+    # Abbey always looks at the last two opponent plays. The last two opponent
+    # plays are recorded in a play_order dictionary list, and the move Abbey
+    # does next depends on the frequency of each combination of the last two
+    # moves that the opponent could have done. The last two move variants with
+    # the highest frequency are looked at, and the last move from that variant
+    # is taken to predict the next ideal response.
     if not prev_opponent_play:
         prev_opponent_play = 'R'
     opponent_history.append(prev_opponent_play)
@@ -111,6 +124,7 @@ def abbey(prev_opponent_play,
 
 
 def human(prev_opponent_play):
+    # The human is simply an interactive component that allows a real person to play.
     play = ""
     while play not in ['R', 'P', 'S']:
         play = input("[R]ock, [P]aper, [S]cissors? ")
@@ -119,4 +133,5 @@ def human(prev_opponent_play):
 
 
 def random_player(prev_opponent_play):
+    # A random player always uses random choices between rock, paper, and scissors.
     return random.choice(['R', 'P', 'S'])
