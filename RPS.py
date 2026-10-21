@@ -1,3 +1,5 @@
+import random
+
 # This is a player function that will be built to defeat each of the four provided bots.
 def player(prev_play, opponent_history=[],
            player_history=[],
@@ -112,3 +114,6 @@ def player(prev_play, opponent_history=[],
         player_move = ideal_move[mrugesh_move]
         player_history.append(player_move)
         return player_move
+
+    else:
+        return random.choice(['R', 'P', 'S'])
