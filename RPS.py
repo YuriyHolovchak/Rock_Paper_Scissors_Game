@@ -34,7 +34,7 @@ def player(prev_play, opponent_history=[],
     # use scissors, but Abbey will use paper.
 
     # Strategy against Mrugesh. Mrugesh always starts with rock. So, first use paper. His
-    # second move will be scissors.
+    # second move will be rock.
 
     # Strategy against Quincy. Quincy always starts with rock. So, first use paper. Quincy
     # will then use paper.
@@ -55,8 +55,9 @@ def player(prev_play, opponent_history=[],
     
     elif len(opponent_history) == 1 and opponent_history[0] == 'R':
         # If the move is rock, the bot is either Mrugesh or Quincy. Quincy will use paper
-        # and Mrugesh will use scissors. So, use scissors here to be safe.
-        return 'S'
+        # and Mrugesh will use rock. So, use paper here to be safe.
+        player_history.append('P')
+        return 'P'
     
     elif len(opponent_history) > 1 and "".join(opponent_history[0:2]) == "PS":
         # This means the bot is Kris, who always counters the opponent's last move. Kris' 
@@ -102,6 +103,12 @@ def player(prev_play, opponent_history=[],
         quincy_counter = ['P', 'S', 'S', 'R', 'P']
         return quincy_counter[len(opponent_history) % 5]
 
-    elif len(opponent_history) > 1 and "".join(opponent_history[0:2]) == "RS":
-        # This means the bot is Mrugesh.
-        pass
+    elif len(opponent_history) > 1 and "".join(opponent_history[0:2]) == "RR":
+        # This means the bot is Mrugesh. He looks at the most frequent move used by the
+        # player in the last 10 moves, so he is easy to counter using player_history.
+        previous_moveset = set(player_history[-10:])
+        most_frequent_move = max((k for k in previous_moveset), key=player_history[-10:].count)
+        mrugesh_move = ideal_move[most_frequent_move]
+        player_move = ideal_move[mrugesh_move]
+        player_history.append(player_move)
+        return player_move
