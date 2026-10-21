@@ -1,11 +1,27 @@
-# The example function below keeps track of the opponent's history and plays whatever the opponent played two plays ago. It is not a very good player so you will need to change the code to pass the challenge.
-
-def player(prev_play, opponent_history=[]):
+# This is a player function that will be built to defeat each of the four provided bots.
+def player(prev_play, opponent_history=[],
+           player_history=[],
+           play_order=[{
+                         "RR": 0,
+                         "RP": 0,
+                         "RS": 0,
+                         "PR": 0,
+                         "PP": 0,
+                         "PS": 0,
+                         "SR": 0,
+                         "SP": 0,
+                         "SS": 0,
+                     }]):
     # The general strategy should be to make some moves first as a test to see who the
     # player is playing against. Then, the right strategy should be used to beat each one.
     if prev_play:
         opponent_history.append(prev_play)
-    ideal_moves = {'R': 'P', 'P': 'S', 'S': 'R'}
+    elif prev_play == "":
+        opponent_history.clear()
+        player_history.clear()
+        for k in play_order[0]:
+            play_order[0][k] = 0
+    ideal_move = {'R': 'P', 'P': 'S', 'S': 'R'}
 
     # Strategy against Kris. At first there is no history, so Kris will use paper,
     # which means that scissors should be used first. On the next move, Kris will use
@@ -15,7 +31,7 @@ def player(prev_play, opponent_history=[]):
 
     # Strategy against Abbey. Abbey always starts with paper, just like Kris.
     # To differentiate Abbey from Kris, need the second move. On the second move, Kris will
-    # use scissors, but Abbey will use rock.
+    # use scissors, but Abbey will use paper.
 
     # Strategy against Mrugesh. Mrugesh always starts with rock. So, first use paper. His
     # second move will be scissors.
@@ -26,28 +42,64 @@ def player(prev_play, opponent_history=[]):
     # On the first move, two of the bots use paper and two use rock, so first move should
     # be paper to make either a win or tie.
     if not opponent_history:
+        player_history.append('P')
+        play_order[0]['RP'] += 1
         return 'P'
+    
     elif len(opponent_history) == 1 and opponent_history[0] == 'P':
-        # If the move is paper, then the bot is either Kris or Abbey. Kris will use
-        # scissors next and Abbey will use rock, so use rock just to be safe.
-        return 'R'
+        # If the bot's move is paper, then the bot is either Kris or Abbey. Kris will use
+        # scissors next and Abbey will use paper, so use scissors just to be safe.
+        player_history.append('S')
+        play_order[0]['PS'] += 1
+        return 'S'
+    
     elif len(opponent_history) == 1 and opponent_history[0] == 'R':
         # If the move is rock, the bot is either Mrugesh or Quincy. Quincy will use rock
         # again and Mrugesh will use scissors. So, use rock here to be safe.
         return 'R'
+    
     elif len(opponent_history) > 1 and "".join(opponent_history[0:2]) == "PS":
-        # This means the bot is Kris, who always counters the opponent's last move. If
-        # Kris' last move was paper, then the player played scissors. This means that his
-        # third move will be rock, so player should use paper. The sequence is, therefore
-        # rock, scissors, paper to win almost every time.
+        # This means the bot is Kris, who always counters the opponent's last move. Kris' 
+        # last move was scissors, but the player used scissors as well. This means that 
+        # his third move will be rock, and the player should use paper. Then, Kris will use
+        # scissors, so player should use rock. After, Kris will use paper, so player should
+        # use scissors. The sequence is, therefore, rock, scissors, paper.
         moveset = ['R', 'S', 'P']
         return moveset[len(opponent_history) % 3]
-    elif len(opponent_history) > 1 and "".join(opponent_history[0:2]) == "PR":
-        # This means the bot is Abbey. 
-        pass
+    
+    elif len(opponent_history) > 1 and "".join(opponent_history[0:2]) == "PP":
+        # This means the bot is Abbey. On the first move, Abbey assumes the player's
+        # imaginary last move is rock. She then looks at possibilities RR, RP, and RS.
+        # She compares each possibility to the number of times it appeared in her
+        # play_order list, then takes the last move of that possibility and counters it.
+        # Therefore, she will first think that the player will choose rock, but the player
+        # will choose paper. Then, she will store the RP sequence in her play_order list.
+        # She will then look at possibilities PR, PP, PS. To beat her, the player needs to
+        # store his own list that reflects what Abbey stores, so make a play_order param.
+        # Abbey's next move will be paper again.
+        
+        potential_plays = [
+            player_history[-1] + "R",
+            player_history[-1] + "P",
+            player_history[-1] + "S",
+        ]
+
+        sub_order = {
+            k: play_order[0][k]
+            for k in potential_plays if k in play_order[0]
+        }
+
+        prediction = max(sub_order, key=sub_order.get)[-1:]
+        abbey_response = ideal_move[prediction]
+        player_response = ideal_move[abbey_response]
+        play_order[0]["".join([player_history[-1], player_response])] += 1
+        player_history.append(player_response)
+        return player_response
+    
     elif len(opponent_history) > 1 and "".join(opponent_history[0:2]) == "RR":
         # This means the bot is Quincy.
         pass
+
     elif len(opponent_history) > 1 and "".join(opponent_history[0:2]) == "RS":
         # This means the bot is Mrugesh.
         pass
