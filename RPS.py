@@ -3,7 +3,9 @@
 def player(prev_play, opponent_history=[]):
     # The general strategy should be to make some moves first as a test to see who the
     # player is playing against. Then, the right strategy should be used to beat each one.
-    opponent_history.append(prev_play)
+    if prev_play:
+        opponent_history.append(prev_play)
+    ideal_moves = {'R': 'P', 'P': 'S', 'S': 'R'}
 
     # Strategy against Kris. At first there is no history, so Kris will use paper,
     # which means that scissors should be used first. On the next move, Kris will use
@@ -23,7 +25,7 @@ def player(prev_play, opponent_history=[]):
 
     # On the first move, two of the bots use paper and two use rock, so first move should
     # be paper to make either a win or tie.
-    if opponent_history == []:
+    if not opponent_history:
         return 'P'
     elif len(opponent_history) == 1 and opponent_history[0] == 'P':
         # If the move is paper, then the bot is either Kris or Abbey. Kris will use
@@ -33,3 +35,19 @@ def player(prev_play, opponent_history=[]):
         # If the move is rock, the bot is either Mrugesh or Quincy. Quincy will use rock
         # again and Mrugesh will use scissors. So, use rock here to be safe.
         return 'R'
+    elif len(opponent_history) > 1 and "".join(opponent_history[0:2]) == "PS":
+        # This means the bot is Kris, who always counters the opponent's last move. If
+        # Kris' last move was paper, then the player played scissors. This means that his
+        # third move will be rock, so player should use paper. The sequence is, therefore
+        # rock, scissors, paper to win almost every time.
+        moveset = ['R', 'S', 'P']
+        return moveset[len(opponent_history) % 3]
+    elif len(opponent_history) > 1 and "".join(opponent_history[0:2]) == "PR":
+        # This means the bot is Abbey. 
+        pass
+    elif len(opponent_history) > 1 and "".join(opponent_history[0:2]) == "RR":
+        # This means the bot is Quincy.
+        pass
+    elif len(opponent_history) > 1 and "".join(opponent_history[0:2]) == "RS":
+        # This means the bot is Mrugesh.
+        pass

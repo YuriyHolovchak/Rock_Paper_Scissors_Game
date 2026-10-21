@@ -92,8 +92,8 @@ def abbey(prev_opponent_play,
               "SP": 0,
               "SS": 0,
           }]):
-    # Abbey always looks at the last two opponent plays. The last two opponent
-    # plays are recorded in a play_order dictionary list, and the move Abbey
+    # Abbey always looks at the last two opponent plays and stores them. The last two 
+    # opponent plays are recorded in a play_order dictionary list, and the move Abbey
     # does next depends on the frequency of each combination of the last two
     # moves that the opponent could have done. The last two move variants with
     # the highest frequency are looked at, and the last move from that variant
