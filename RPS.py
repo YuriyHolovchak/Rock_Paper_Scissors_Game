@@ -37,7 +37,7 @@ def player(prev_play, opponent_history=[],
     # second move will be scissors.
 
     # Strategy against Quincy. Quincy always starts with rock. So, first use paper. Quincy
-    # will then use rock again.
+    # will then use paper.
 
     # On the first move, two of the bots use paper and two use rock, so first move should
     # be paper to make either a win or tie.
@@ -54,9 +54,9 @@ def player(prev_play, opponent_history=[],
         return 'S'
     
     elif len(opponent_history) == 1 and opponent_history[0] == 'R':
-        # If the move is rock, the bot is either Mrugesh or Quincy. Quincy will use rock
-        # again and Mrugesh will use scissors. So, use rock here to be safe.
-        return 'R'
+        # If the move is rock, the bot is either Mrugesh or Quincy. Quincy will use paper
+        # and Mrugesh will use scissors. So, use scissors here to be safe.
+        return 'S'
     
     elif len(opponent_history) > 1 and "".join(opponent_history[0:2]) == "PS":
         # This means the bot is Kris, who always counters the opponent's last move. Kris' 
@@ -96,9 +96,11 @@ def player(prev_play, opponent_history=[],
         player_history.append(player_response)
         return player_response
     
-    elif len(opponent_history) > 1 and "".join(opponent_history[0:2]) == "RR":
-        # This means the bot is Quincy.
-        pass
+    elif len(opponent_history) > 1 and "".join(opponent_history[0:2]) == "RP":
+        # This means the bot is Quincy. He is easy to counter because he always plays
+        # RPPSR, so the right moves would be PSSRP in that order.
+        quincy_counter = ['P', 'S', 'S', 'R', 'P']
+        return quincy_counter[len(opponent_history) % 5]
 
     elif len(opponent_history) > 1 and "".join(opponent_history[0:2]) == "RS":
         # This means the bot is Mrugesh.

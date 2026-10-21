@@ -49,7 +49,7 @@ def play(player1, player2, num_games, verbose=False):
 
 
 def quincy(prev_play, counter=[0]):
-    # Quincy depends on a counter that always plays RRPPS in that order and starts over when list exhausts
+    # Quincy depends on a counter that always plays RPPSR in that order and starts over when list exhausts
     counter[0] += 1
     choices = ["R", "R", "P", "P", "S"]
     return choices[counter[0] % len(choices)]
